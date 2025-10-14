@@ -1,0 +1,112 @@
+{
+  "training_date": "2025-10-11T09:14:40.259707",
+  "dataset_size": 73751,
+  "train_size": 51654,
+  "val_size": 11034,
+  "test_size": 11063,
+  "train_metrics": {
+    "train_mae": 365383.1260853781,
+    "train_rmse": 756401.3775804492,
+    "train_r2": 0.9806303093505286,
+    "train_mape": 12.395561970702888,
+    "val_mae": 592390.5939650668,
+    "val_rmse": 1703239.7728919552,
+    "val_r2": 0.8973561810397376,
+    "val_mape": 16.627470128251236
+  },
+  "test_metrics": {
+    "mae": 586818.3783960753,
+    "rmse": 1676524.4421723362,
+    "r2": 0.897468743772281,
+    "mape": 16.7631301161583,
+    "error_percentiles": {
+      "p50": 174569.9375,
+      "p75": 483033.25,
+      "p90": 1214064.7000000011,
+      "p95": 2215781.999999997
+    }
+  },
+  "feature_count": 30,
+  "top_features": [
+    {
+      "feature": "procedure_area",
+      "importance": 0.26782456040382385
+    },
+    {
+      "feature": "rent_to_price_ratio",
+      "importance": 0.10212617367506027
+    },
+    {
+      "feature": "area_proptype_interaction",
+      "importance": 0.07661113888025284
+    },
+    {
+      "feature": "group_en_encoded",
+      "importance": 0.051740434020757675
+    },
+    {
+      "feature": "prop_sb_type_en_encoded",
+      "importance": 0.050008468329906464
+    },
+    {
+      "feature": "actual_area",
+      "importance": 0.04477324336767197
+    },
+    {
+      "feature": "median_rent_nearby",
+      "importance": 0.04017537087202072
+    },
+    {
+      "feature": "nearest_landmark_en_encoded",
+      "importance": 0.0391756072640419
+    },
+    {
+      "feature": "rental_availability",
+      "importance": 0.03684548661112785
+    },
+    {
+      "feature": "parking_encoded",
+      "importance": 0.032049454748630524
+    },
+    {
+      "feature": "nearest_mall_en_encoded",
+      "importance": 0.030107587575912476
+    },
+    {
+      "feature": "area_en_encoded",
+      "importance": 0.029221082106232643
+    },
+    {
+      "feature": "usage_en_encoded",
+      "importance": 0.027881255373358727
+    },
+    {
+      "feature": "prop_type_en_encoded",
+      "importance": 0.026554515585303307
+    },
+    {
+      "feature": "procedure_en_encoded",
+      "importance": 0.02378857508301735
+    },
+    {
+      "feature": "project_en_encoded",
+      "importance": 0.021467169746756554
+    },
+    {
+      "feature": "nearest_metro_en_encoded",
+      "importance": 0.020966408774256706
+    },
+    {
+      "feature": "area_rooms_interaction",
+      "importance": 0.015627512708306313
+    },
+    {
+      "feature": "rooms_en_encoded",
+      "importance": 0.015175511129200459
+    },
+    {
+      "feature": "room_count",
+      "importance": 0.011143052950501442
+    }
+  ]
+}

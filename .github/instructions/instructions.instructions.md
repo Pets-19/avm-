@@ -1,0 +1,81 @@
+---
+applyTo: '**'
+---
+Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
+
+- if venv is present, use it
+- use black formatting
+- use type hints
+- use logging instead of print
+- write modular code with functions and classes
+- write unit tests for new functionality
+- prefer list/dict comprehensions
+- prefer built-in functions and libraries
+- prefer f-strings for formatting
+- prefer pathlib for file paths
+- do without affecting the rest functionality unless asked
+- follow PEP 8 style guide
+- follow existing project structure and conventions
+- follow DRY (Don't Repeat Yourself) principle
+- follow SOLID principles
+- follow YAGNI (You Aren't Gonna Need It) principle
+- write clear and concise docstrings
+- write meaningful commit messages
+- avoid hardcoding values, use constants or config files
+- avoid deep nesting, refactor into smaller functions or use guard clauses
+- avoid global variables, use function parameters or class attributes
+- avoid premature optimization, focus on readability and maintainability first
+- avoid using wildcard imports
+- avoid using mutable default arguments
+- avoid using bare except clauses
+- avoid using print statements for debugging, use logging instead
+- avoid using magic numbers, use named constants instead
+- avoid using too many function parameters, consider using data classes or dictionaries
+- avoid using too many nested loops, consider using itertools or helper functions
+- avoid using too many return statements in a function, consider refactoring into smaller functions
+- avoid using too many comments, write self-explanatory code instead
+- avoid using too many blank lines, follow PEP 8 guidelines
+- avoid using too many inline comments, write self-explanatory code instead
+- avoid using too many global imports, import only what is necessary
+- avoid using too many nested functions, consider using helper functions or classes
+- avoid using too many conditional statements, consider using polymorphism or strategy pattern
+- avoid using too many string concatenations, use f-strings or str.join() instead
+- avoid using too many list/dict comprehensions, consider using helper functions or classes
+- avoid using too many lambda functions, consider using named functions instead
+- avoid using too many nested data structures, consider using classes or namedtuples
+- avoid using too many nested conditionals, consider using guard clauses or early returns
+- avoid using too many nested try/except blocks, consider using helper functions or classes
+- avoid using too many nested context managers, consider using helper functions or classes
+- avoid using too many nested decorators, consider using helper functions or classes
+- avoid using too many nested generators, consider using helper functions or classes
+- avoid using too many nested comprehensions, consider using helper functions or classes
+- avoid using too many nested expressions, consider using helper functions or classes
+- avoid using too many nested statements, consider using helper functions or classes
+- avoid using too many nested imports, import only what is necessary
+- avoid using too many nested classes, consider using helper functions or modules
+- avoid using too many nested modules, consider using helper functions or classes
+- avoid using too many nested packages, consider using helper functions or classes
+- avoid using too many nested files, consider using helper functions or classes
+- avoid using too many nested directories, consider using helper functions or classes
+- always ask for clarification if the request is ambiguous or incomplete
+- always confirm before making major changes to the codebase
+- always provide explanations for code changes or suggestions
+- always provide references to relevant documentation or resources
+- always prioritize code readability and maintainability over cleverness or brevity
+- always ensure code is well-tested before suggesting changes
+- always ensure code follows project guidelines and conventions
+- always ensure code is compatible with the project's Python version and dependencies
+- always ensure code is secure and does not introduce vulnerabilities
+- always ensure code is efficient and does not introduce performance bottlenecks
+- always ensure code is robust and handles edge cases gracefully
+- always ensure code is modular and reusable
+- always ensure code is well-documented and easy to understand
+- always ensure code is consistent with the rest of the codebase
+- always ensure code is easy to maintain and extend in the future
+- always ensure code is easy to test and debug
+- always ensure code is easy to deploy and run in different environments
+- always ensure code is easy to integrate with other systems or libraries
+- always ensure code is easy to configure and customize
+- always ensure code is easy to monitor and log
+- always ensure code is easy to scale and optimize
+- always ensure code is easy to refactor and improve over time

@@ -1,0 +1,284 @@
+# AREAS NEEDING LOCATION PREMIUM DATA
+# Generated: October 7, 2025
+# Total: 244 areas missing data
+
+================================================================================
+🔴 HIGH PRIORITY - START HERE (107 areas with 100+ properties each)
+================================================================================
+
+These areas have the MOST properties, so adding them will have the biggest impact!
+
+1. Al Yelayiss 1
+2. Jumeirah Lakes Towers
+3. Motor City
+4. Burj Khalifa
+5. Madinat Hind 4
+6. Silicon Oasis
+7. Al Furjan
+8. Arjan
+9. Bukadra
+10. Dubai Investment Park Second
+11. Al Yufrah 1
+12. Dubai Hills
+13. Wadi Al Safa 5
+14. Dubai Creek Harbour
+15. Dubai South
+16. Jabal Ali First
+17. Al Hebiah Fifth
+18. INTERNATIONAL CITY PH 1
+19. Meydan One
+20. Damac Hills
+21. Wadi Al Safa 7
+22. Madinat Dubai Almelaheyah
+23. Wadi Al Safa 3
+24. INTERNATIONAL CITY PH 2 & 3
+25. Town Square
+26. Sobha Heartland
+27. Al Yelayiss 2
+28. Dubai Maritime City
+29. Dubai Studio City
+30. Marsa Dubai
+31. Me'Aisem Second
+32. Al Khairan First
+33. Al Wasl
+34. Emirate Living
+35. Discovery Gardens
+36. Liwan
+37. Al Satwa
+38. The Greens
+39. Dubai Harbour
+40. Jumeirah Beach Residence
+41. Emaar South
+42. Down Town Jabal Ali
+43. Tecom Site D
+44. Palm Jabal Ali
+45. Al Aweer First
+46. Villanova
+47. Remraam
+48. DUBAI HEALTHCARE CITY - PHASE 2
+49. Dubai Industrial City
+50. Arabian Ranches I
+51. Barsha Heights
+52. Ras Al Khor Industrial First
+53. Dubai Water Canal
+54. Mira
+55. Dubai Investment Park First
+56. Al Kifaf
+57. Al Hebiah Fourth
+58. Jumeirah Golf
+59. Trade Center First
+60. Falcon City Of Wonders
+61. Horizon
+62. Mirdif
+63. Arabian Ranches Iii
+64. Mudon
+65. Nad Al Shiba First
+66. Zaabeel Second
+67. Jumeirah Heights
+68. City Of Arabia
+69. MBR DISTRICT 1
+70. Jabel Ali Hills
+71. Jumeirah Park
+72. Meydan Avenue
+73. MBR DISTRICT 7
+74. Al Khail Heights
+75. Al Jadaf
+76. Arabian Ranches Ii
+77. La Mer
+78. The Villa
+79. City Walk
+80. Um Suqaim Third
+81. The Field
+82. Serena
+83. Al Nahda First
+84. Tecom Site A
+85. Living Legends
+86. The Valley
+87. The Lakes
+88. Sufouh Gardens
+89. Tilal Al Ghaf
+90. Me'Aisem First
+91. Al Khawaneej Second
+92. Al Warsan Third
+93. Al Hebiah Sixth
+94. Zaabeel First
+95. Ghadeer Al tair
+96. Al Merkadh
+97. Al Yelayiss 5
+98. Nad Al Shiba Third
+99. Nad Al Sheba Gardens
+100. Al Barari
+101. Wadi Al Safa 2
+102. Jumeirah Islands
+103. Al Thanyah Fifth
+104. Al Hebiah Third
+105. Jumeirah Second
+106. AL Athbah
+107. Nad Al Hamar
+
+================================================================================
+🟡 MEDIUM PRIORITY - Do these next (67 areas with 20-99 properties each)
+================================================================================
+
+1. Sustainable City
+2. Al Khawaneej First
+3. Jumeirah Living
+4. Madinat Hind 3
+5. Jumeirah First
+6. Al Qusais Industrial Fifth
+7. Hor Al Anz
+8. Muhaisanah First
+9. Al Warqa Third
+10. The World
+11. Warsan First
+12. Al Barsha First
+13. Bluewaters
+14. Ras Al Khor
+15. Wadi Al Amardi
+16. Al Kheeran
+17. Al Warqa Fourth
+18. Al Waha
+19. Cherrywoods
+20. Trade Center Second
+21. Al Mizhar First
+22. Al Rashidiya
+23. Business Park
+24. Al Barsha Second
+25. Al Barshaa South Second
+26. Al Bada
+27. Al Barshaa South First
+28. Al Waheda
+29. Al Goze First
+30. Nad Al Shiba Fourth
+31. Al Barsha Third
+32. Pearl Jumeira
+33. Rukan
+34. Jumeira Bay
+35. Grand Views
+36. Jabal Ali Industrial First
+37. Um Suqaim Second
+38. Abu Hail
+39. Al Warqa Second
+40. Dubai Water Front
+41. Al Barshaa South Third
+42. Millennium
+43. Nadd Hessa
+44. Al Mizhar Second
+45. Al Mizhar Fourth
+46. Jumeirah Third
+47. Al Suq Al Kabeer
+48. Mankhool
+49. Al Karama
+50. Al Murqabat
+51. Al Muteena
+52. Al Nahda Second
+53. Nad Al Shiba Second
+54. Naif
+55. Um Al Sheif
+56. Al Mizhar Third
+57. Um Suqaim First
+58. Al Mamzer
+59. Al Raffa
+60. Al Twar Third
+61. Al Warqa First
+62. Al Aweer Second
+63. Al Jafliya
+64. Al Warsan Second
+65. Dubai Design District
+66. Mina Rashid
+67. Sama Al Jadaf
+
+================================================================================
+🟢 LOW PRIORITY - Optional (35 areas with 5-19 properties each)
+================================================================================
+
+1. Mushrif
+2. Al Qusais Industrial Fourth
+3. Port Saeed
+4. Al Hamriya
+5. Al Saffa Second
+6. Dubai Golf City
+7. Muhaisanah Third
+8. Al Goze Fourth
+9. Al Manara
+10. Al Twar Fourth
+11. Arabian Ranches Polo Club
+12. Island 2
+13. Al Dhagaya
+14. DMCC-EZ2
+15. LIWAN 2
+16. DUBAI HEALTHCARE CITY - PHASE 1
+17. Polo Townhouses Igo
+18. Al Mararr
+19. Al Twar Fifth
+20. Al Khabeesi
+21. Eyal Nasser
+22. Medyan Race Course Villas
+23. Oud Metha
+24. Al Ras
+25. Al Twar First
+26. Hor Al Anz East
+27. Madinat Latifa
+28. Nad Shamma
+29. Rega Al Buteen
+30. Um Hurair First
+31. Um Ramool
+32. Al Baraha
+33. Al Saffa First
+34. Muhaisanah Fourth
+35. Saih Shuaib 4
+
+================================================================================
+SUMMARY
+================================================================================
+
+Total areas needing data: 244 areas
+Current coverage: 20 areas (7.7%)
+Target coverage: 264 areas (100%)
+
+RECOMMENDATION:
+- Start with TOP 20-30 from HIGH PRIORITY list
+- Focus on well-known residential/commercial areas
+- Skip industrial/remote areas for now
+
+ALREADY IN DATABASE (Do NOT collect these):
+✓ Business Bay
+✓ Dubai Marina
+✓ JLT
+✓ Palm Jumeirah
+✓ Downtown Dubai
+✓ Al Barsha
+✓ Jumeirah Village Circle
+✓ Dubai Science Park
+✓ MAJAN
+✓ Madinat Al Mataar
+✓ Hadaeq Sheikh Mohammed Bin Rashid
+✓ JADDAF WATERFRONT
+✓ JUMEIRAH VILLAGE TRIANGLE
+✓ DUBAI LAND RESIDENCE COMPLEX
+✓ DUBAI PRODUCTION CITY
+✓ Palm Deira
+✓ Wadi Al Safa 4
+✓ Palm Hills
+✓ Jumeirah Golf Estate
+✓ Green Community
+
+================================================================================
+HOW TO COLLECT DATA
+================================================================================
+
+For each area, you need:
+1. Area Name (copy from above)
+2. GPS Coordinates (lat, lon) - from Google Maps
+3. Metro Distance (km) - distance to nearest metro station
+4. Beach Distance (km) - distance to nearest beach
+5. Mall Distance (km) - distance to nearest major mall
+6. School Distance (km) - distance to nearest school (or use 10.0 default)
+7. Business Distance (km) - distance to business district
+8. Neighborhood Score (1-5) - quality rating
+
+Use the CSV template: LOCATION_PREMIUM_DATA_TEMPLATE.csv
+
+Just fill in the rows and send me the completed file!
+
+================================================================================

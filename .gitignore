@@ -1,0 +1,25 @@
+# Environment variables
+.env
+
+# Zip files
+*.zip
+
+# Logs
+logs/
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+*.py[cod]
+*$py.class
+# C extensions
+*.so
+
+.gitignores
+# Virtual environment
+venv/
+
+# Log files
+*.log
+data/rentals_training.csv
