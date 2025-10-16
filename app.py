@@ -1596,6 +1596,8 @@ def get_property_valuation():
         floor_level = data.get('floor_level')  # Optional: floor number
         view_type = data.get('view_type')      # Optional: view quality
         property_age = data.get('property_age')  # Optional: age in years
+        esg_score_min = data.get('esg_score_min')  # Optional: minimum ESG sustainability score
+        flip_score_min = data.get('flip_score_min')  # Optional: minimum Flip investment score
         
         # Use production database valuation with global engine
         result = calculate_valuation_from_database(
@@ -1607,15 +1609,21 @@ def get_property_valuation():
             floor_level=floor_level,  # Phase 3: Floor premium
             view_type=view_type,      # Phase 3: View premium
             property_age=property_age,  # Phase 3: Age premium
+            esg_score_min=esg_score_min,  # ESG sustainability score filter
+            flip_score_min=flip_score_min,  # Flip investment score filter
             engine=engine  # Pass the global database engine
         )
         
         if result['success']:
             return jsonify(result)
         else:
+            logging.error(f"❌ [VALUATION] Failed: {result.get('error', 'Unknown error')}")
             return jsonify(result), 500
             
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        logging.error(f"❌ [VALUATION] Exception: {str(e)}\n{error_details}")
         return jsonify({
             'success': False, 
             'error': f'Valuation failed: {str(e)}'
@@ -1807,7 +1815,7 @@ def classify_price_segment(price_per_sqm):
         }
 
 
-def calculate_valuation_from_database(property_type: str, area: str, size_sqm: float, engine, bedrooms: str = None, development_status: str = None, floor_level: int = None, view_type: str = None, property_age: int = None) -> dict:
+def calculate_valuation_from_database(property_type: str, area: str, size_sqm: float, engine, bedrooms: str = None, development_status: str = None, floor_level: int = None, view_type: str = None, property_age: int = None, esg_score_min: int = None, flip_score_min: int = None) -> dict:
     """
     Production valuation function using the main app's database engine
     
@@ -1818,6 +1826,11 @@ def calculate_valuation_from_database(property_type: str, area: str, size_sqm: f
         engine: SQLAlchemy database engine
         bedrooms: Optional bedroom count filter (Studio, 1-6, or empty for any)
         development_status: Optional status filter (Ready, Off Plan, or empty for any)
+        floor_level: Optional floor number for premium calculation
+        view_type: Optional view type for premium calculation
+        property_age: Optional property age in years
+        esg_score_min: Optional minimum ESG sustainability score (0-100)
+        flip_score_min: Optional minimum Flip investment score (0-100)
     """
     try:
         import pandas as pd
@@ -1848,6 +1861,23 @@ def calculate_valuation_from_database(property_type: str, area: str, size_sqm: f
         if development_status:
             status_condition = f"AND is_offplan_en = '{development_status}'"
         
+        # Build ESG score filter
+        esg_condition = ""
+        if esg_score_min:
+            # Find ESG column using dynamic mapping (follows existing pattern)
+            esg_col = find_column_name(SALES_COLUMNS, ['esg_score', 'sustainability_score', 'esg_rating'])
+            if esg_col:
+                esg_condition = f"AND {esg_col} >= {int(esg_score_min)}"
+                print(f"🌱 [DB] Filtering for ESG score >= {esg_score_min}")
+        
+        flip_condition = ""
+        if flip_score_min:
+            # Find Flip column using dynamic mapping (follows existing pattern)
+            flip_col = find_column_name(SALES_COLUMNS, ['flip_score', 'investment_score', 'flip_rating'])
+            if flip_col:
+                flip_condition = f"AND {flip_col} >= {int(flip_score_min)}"
+                print(f"📈 [DB] Filtering for Flip score >= {flip_score_min}")
+        
         # Enhanced SQL query to get comprehensive comparable properties from database
         query = text(f"""
         SELECT 
@@ -1872,6 +1902,8 @@ def calculate_valuation_from_database(property_type: str, area: str, size_sqm: f
             AND CAST(actual_area AS NUMERIC) BETWEEN 20 AND 2000  -- Reasonable area range
             {bedroom_condition}
             {status_condition}
+            {esg_condition}
+            {flip_condition}
             AND (
                 LOWER(area_en) LIKE LOWER(:area_param)
                 OR (
@@ -1909,7 +1941,12 @@ def calculate_valuation_from_database(property_type: str, area: str, size_sqm: f
         print(f"🔍 [DB] Found {len(df)} properties in database query")
         
         if len(df) == 0:
-            raise ValueError(f"No comparable properties found in database for {property_type} in {area}")
+            # Check if ESG filter caused empty results
+            if esg_score_min:
+                error_msg = f"No properties found with ESG score {esg_score_min}+ for {property_type} in {area}. Current ESG data ranges from 25-55. Please try a lower ESG threshold (25+, 40+) or select 'Any Score'."
+            else:
+                error_msg = f"No comparable properties found in database for {property_type} in {area}"
+            raise ValueError(error_msg)
         
         # Data cleaning and preparation
         df = df.dropna(subset=['property_total_value', 'actual_area'])

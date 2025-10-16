@@ -578,8 +578,41 @@
                                 <small style="color: #666; font-size: 0.75rem; display: block; margin-top: 4px;">Years (0 = new/off-plan)</small>
                             </div>
                             
-                            <!-- Tip Box - spans remaining columns -->
-                            <div style="grid-column: span 2; display: flex; align-items: center;">
+                            <!-- ESG Score Filter (Sustainability) -->
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="esg-score-min" style="display: flex; align-items: center; margin-bottom: 8px; font-size: 0.9rem;">
+                                    🌱 ESG Score (Sustainability)
+                                    <span class="tooltip-icon" title="Environmental, Social & Governance rating (0-100). Higher scores indicate better sustainability practices, energy efficiency, and green certifications." 
+                                          style="margin-left: 5px; cursor: help; color: #666; font-size: 0.85rem;">ⓘ</span>
+                                </label>
+                                <select id="esg-score-min" name="esg_score_min" 
+                                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.95rem;">
+                                    <option value="">Any Score</option>
+                                    <option value="25">25+ (Basic) ✓</option>
+                                    <option value="40">40+ (Moderate) ✓</option>
+                                    <option value="60" disabled style="color: #999;">60+ (High Performance) - No data</option>
+                                    <option value="80" disabled style="color: #999;">80+ (Exceptional) - No data</option>
+                                </select>
+                                <small style="color: #666; font-size: 0.75rem; display: block; margin-top: 4px;">Current ESG data: 25-55 range (2,148 properties)</small>
+                            </div>
+                            
+                            <!-- Flip Score Filter - OPTIONAL -->
+                            <div style="grid-column: span 1;">
+                                <label for="flip-score-min" style="display: flex; align-items: center; gap: 6px; margin-bottom: 5px; font-weight: 500;">
+                                    <span>📈 Flip Score (Investment)</span>
+                                </label>
+                                <select id="flip-score-min" name="flip_score_min" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <option value="">Any Score</option>
+                                    <option value="30">30+ (Low Potential) ✓</option>
+                                    <option value="50">50+ (Moderate) ✓</option>
+                                    <option value="70">70+ (Good) ✓</option>
+                                    <option value="80">80+ (Excellent) ✓</option>
+                                </select>
+                                <small style="color: #666; font-size: 0.75rem; display: block; margin-top: 4px;">Current Flip data: 30-88 range (10 properties)</small>
+                            </div>
+                            
+                            <!-- Tip Box - spans remaining column -->
+                            <div style="grid-column: span 1; display: flex; align-items: center;">
                                 <div style="padding: 10px 15px; background: #fff3cd; border-radius: 4px; font-size: 0.85rem; color: #856404; height: fit-content;">
                                     <strong>💡 Tip:</strong> These optional fields help refine the valuation. Leave blank if unknown.
                                 </div>
@@ -2526,6 +2559,8 @@
                 const floorLevel = document.getElementById('floor-level').value;
                 const viewType = document.getElementById('view-type').value;
                 const propertyAge = document.getElementById('property-age').value;
+                const esgScoreMin = document.getElementById('esg-score-min').value;
+                const flipScoreMin = document.getElementById('flip-score-min').value;
                 
                 // Validation
                 if (!propertyType || !area || !size || size <= 0) {
@@ -2565,6 +2600,16 @@
                     
                     if (propertyAge && propertyAge !== '') {
                         requestData.property_age = parseInt(propertyAge);
+                    }
+                    
+                    // Add ESG score filter if selected
+                    if (esgScoreMin && esgScoreMin !== '') {
+                        requestData.esg_score_min = parseInt(esgScoreMin);
+                    }
+                    
+                    // Add Flip score filter if selected
+                    if (flipScoreMin && flipScoreMin !== '') {
+                        requestData.flip_score_min = parseInt(flipScoreMin);
                     }
                     
                     const response = await fetch('/api/property/valuation', {
@@ -2671,13 +2716,25 @@
                 if (valuation.rental_data && valuation.rental_data.annual_rent && valuation.estimated_value > 0) {
                     const grossYield = (valuation.rental_data.annual_rent / valuation.estimated_value * 100).toFixed(2);
                     
-                    // Show rental yield card
+                    // Show rental yield card with multiple visibility settings
                     const rentalCard = document.getElementById('rental-yield-card');
-                    rentalCard.style.display = 'block';
-                    rentalCard.style.visibility = 'visible';
-                    rentalCard.style.opacity = '1';
+                    if (rentalCard) {
+                        rentalCard.style.display = 'block';
+                        rentalCard.style.visibility = 'visible';
+                        rentalCard.style.opacity = '1';
+                        rentalCard.classList.remove('d-none'); // Remove bootstrap hidden class if present
+                        console.log('✅ Rental yield card visibility set to: block');
+                    } else {
+                        console.error('❌ rental-yield-card element not found in DOM!');
+                    }
                     
-                    document.getElementById('rental-yield').textContent = grossYield;
+                    const yieldTextElement = document.getElementById('rental-yield');
+                    if (yieldTextElement) {
+                        yieldTextElement.textContent = grossYield;
+                        console.log(`✅ Rental yield text updated: ${grossYield}%`);
+                    } else {
+                        console.error('❌ rental-yield element not found in DOM!');
+                    }
                     
                     // Update subtitle based on data quality
                     let subtitle = `Based on ${valuation.rental_data.count} rental comparables`;
