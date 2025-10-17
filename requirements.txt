@@ -26,6 +26,9 @@ gunicorn>=21.0.0
 SQLAlchemy>=2.0.0
 psycopg2-binary>=2.9.0
 
+# Caching
+redis>=5.0.0
+
 # Additional utilities (if needed in future)
 # requests>=2.31.0
 # numpy>=1.24.0requests>=2.31.0

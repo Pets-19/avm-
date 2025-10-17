@@ -141,6 +141,61 @@ else
 fi
 echo ""
 
+# Test 18: Verify Performance Indexes Exist
+echo "🔍 Checking database performance indexes..."
+if command -v python3 &> /dev/null; then
+    INDEX_CHECK=$(python3 << 'EOF'
+import os
+import sys
+from sqlalchemy import create_engine, text
+
+try:
+    database_url = os.getenv('DATABASE_URL')
+    if not database_url:
+        print("SKIP")
+        sys.exit(0)
+    
+    # Clean DATABASE_URL: strip whitespace/newlines and remove channel_binding parameter
+    import re
+    database_url = database_url.strip()
+    if '&channel_binding=' in database_url or '?channel_binding=' in database_url:
+        database_url = re.sub(r'[&?]channel_binding=[^&]*', '', database_url)
+    
+    engine = create_engine(database_url, connect_args={'sslmode': 'require'})
+    
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT COUNT(*) 
+            FROM pg_indexes 
+            WHERE indexname IN ('idx_properties_area_type', 'idx_rentals_area_type')
+        """))
+        count = result.scalar()
+    
+    print(count)
+except Exception as e:
+    print(f"ERROR")
+    sys.exit(0)
+EOF
+)
+    
+    if [ "$INDEX_CHECK" == "2" ]; then
+        echo -e "${GREEN}✅${NC} Performance indexes exist (2/2)"
+        ((PASS++))
+    elif [ "$INDEX_CHECK" == "1" ]; then
+        echo -e "${YELLOW}⚠️${NC}  Partial performance indexes (1/2) - missing index"
+    elif [ "$INDEX_CHECK" == "SKIP" ]; then
+        echo -e "${YELLOW}⚠️${NC}  DATABASE_URL not set, skipping index check"
+    elif [ "$INDEX_CHECK" == "ERROR" ]; then
+        echo -e "${YELLOW}⚠️${NC}  Could not verify indexes (DB connection issue)"
+    else
+        echo -e "${RED}❌${NC} Missing performance indexes (found $INDEX_CHECK/2)"
+        ((FAIL++))
+    fi
+else
+    echo -e "${YELLOW}⚠️${NC}  Python not available, skipping index check"
+fi
+echo ""
+
 # Summary
 echo "=============================="
 echo "📊 RESULTS"

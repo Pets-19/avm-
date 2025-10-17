@@ -57,9 +57,15 @@ else:
 engine = None
 if DATABASE_URL:
     try:
+        # Clean DATABASE_URL: strip whitespace/newlines and remove channel_binding parameter
+        cleaned_url = DATABASE_URL.strip()
+        if '&channel_binding=' in cleaned_url or '?channel_binding=' in cleaned_url:
+            import re
+            cleaned_url = re.sub(r'[&?]channel_binding=[^&]*', '', cleaned_url)
+        
         # Connection settings optimized for Neon serverless
         engine = create_engine(
-            DATABASE_URL,
+            cleaned_url,
             echo=True,  # Enable debug logging
             pool_pre_ping=True,  # Enable connection health checks
             pool_size=2,  # Reduced pool size
@@ -144,6 +150,83 @@ RENTALS_MAP = {
 
 print(f"🔍 SALES MAP: {SALES_MAP}")
 print(f"🔍 RENTALS MAP: {RENTALS_MAP}")
+
+# --- Redis Cache Configuration ---
+REDIS_ENABLED = os.getenv("REDIS_ENABLED", "false").lower() == "true"
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
+redis_client = None
+
+if REDIS_ENABLED:
+    try:
+        import redis
+        redis_client = redis.Redis(
+            host=REDIS_HOST,
+            port=REDIS_PORT,
+            decode_responses=True,
+            socket_connect_timeout=2,
+            socket_timeout=2
+        )
+        redis_client.ping()
+        print("✅ Redis cache connected successfully")
+    except Exception as e:
+        print(f"⚠️ Redis connection failed: {e}. Continuing without cache.")
+        redis_client = None
+        REDIS_ENABLED = False
+else:
+    print("ℹ️ Redis caching disabled (set REDIS_ENABLED=true to enable)")
+
+def cache_result(timeout=300, key_prefix=""):
+    """
+    Decorator to cache function results in Redis
+    
+    Args:
+        timeout: Cache TTL in seconds (default 5 minutes)
+        key_prefix: Optional prefix for cache keys
+    
+    Returns:
+        Decorated function with caching capability
+    """
+    from functools import wraps
+    
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            # Skip caching if Redis not available
+            if not REDIS_ENABLED or redis_client is None:
+                return f(*args, **kwargs)
+            
+            # Build cache key from function name and arguments
+            # Filter out non-serializable args (like Flask request objects)
+            safe_args = tuple(str(arg) for arg in args if not hasattr(arg, 'environ'))
+            safe_kwargs = {k: str(v) for k, v in kwargs.items() if not hasattr(v, 'environ')}
+            
+            cache_key_data = f"{key_prefix}{f.__name__}:{safe_args}:{json.dumps(safe_kwargs, sort_keys=True)}"
+            cache_key = hashlib.md5(cache_key_data.encode()).hexdigest()[:16]  # Shorten key
+            
+            try:
+                # Try to get from cache
+                cached = redis_client.get(cache_key)
+                if cached:
+                    print(f"✅ Cache HIT: {f.__name__} (key: {cache_key})")
+                    return json.loads(cached)
+            except Exception as e:
+                print(f"⚠️ Cache read failed for {f.__name__}: {e}")
+            
+            # Cache miss - execute function
+            print(f"❌ Cache MISS: {f.__name__} (key: {cache_key})")
+            result = f(*args, **kwargs)
+            
+            try:
+                # Store in cache
+                redis_client.setex(cache_key, timeout, json.dumps(result))
+                print(f"💾 Cache STORED: {f.__name__} (TTL: {timeout}s)")
+            except Exception as e:
+                print(f"⚠️ Cache write failed for {f.__name__}: {e}")
+            
+            return result
+        return decorated_function
+    return decorator
 
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -1576,6 +1659,7 @@ def logout():
 
 @app.route('/api/property/valuation', methods=['POST'])
 @login_required
+@cache_result(timeout=300, key_prefix="valuation:")  # Cache for 5 minutes
 def get_property_valuation():
     """
     Production Automated Property Valuation API
@@ -2733,6 +2817,8 @@ def search_buy():
         try:
             total_results = conn.execute(count_query, params).scalar_one()
             results_df = pd.read_sql_query(display_query, conn, params=params)
+            # Replace NaN with None for valid JSON serialization
+            results_df = results_df.replace({np.nan: None})
             display_results_list = results_df.to_dict(orient='records')
         except Exception as e:
             print(f"❌ BUY SEARCH FAILED: {e}")
@@ -2867,6 +2953,8 @@ def search_rent():
             try:
                 total_results = conn.execute(count_query, params).scalar_one()
                 results_df = pd.read_sql_query(display_query, conn, params=params)
+                # Replace NaN with None for valid JSON serialization
+                results_df = results_df.replace({np.nan: None})
                 display_results_list = results_df.to_dict(orient='records')
                 print(f"🔍 RENT RESULTS: {total_results} records found")
                 conn.close()
@@ -3011,6 +3099,7 @@ def home():
 
 @app.route('/api/areas/<search_type>')
 @login_required
+@cache_result(timeout=3600, key_prefix="areas:")  # Cache for 1 hour
 def get_areas(search_type):
     if not engine: return jsonify([])
     
@@ -3159,6 +3248,7 @@ def get_top_areas():
 
 @app.route('/api/property-types/<search_type>')
 @login_required
+@cache_result(timeout=3600, key_prefix="prop_types:")  # Cache for 1 hour
 def get_property_types(search_type):
     if not engine: return jsonify([])
     
