@@ -1598,6 +1598,7 @@ def get_property_valuation():
         property_age = data.get('property_age')  # Optional: age in years
         esg_score_min = data.get('esg_score_min')  # Optional: minimum ESG sustainability score
         flip_score_min = data.get('flip_score_min')  # Optional: minimum Flip investment score
+        arbitrage_score_min = data.get('arbitrage_score_min')  # Optional: minimum Arbitrage value score
         
         # Use production database valuation with global engine
         result = calculate_valuation_from_database(
@@ -1611,6 +1612,7 @@ def get_property_valuation():
             property_age=property_age,  # Phase 3: Age premium
             esg_score_min=esg_score_min,  # ESG sustainability score filter
             flip_score_min=flip_score_min,  # Flip investment score filter
+            arbitrage_score_min=arbitrage_score_min,  # Arbitrage value score filter
             engine=engine  # Pass the global database engine
         )
         
@@ -1815,7 +1817,7 @@ def classify_price_segment(price_per_sqm):
         }
 
 
-def calculate_valuation_from_database(property_type: str, area: str, size_sqm: float, engine, bedrooms: str = None, development_status: str = None, floor_level: int = None, view_type: str = None, property_age: int = None, esg_score_min: int = None, flip_score_min: int = None) -> dict:
+def calculate_valuation_from_database(property_type: str, area: str, size_sqm: float, engine, bedrooms: str = None, development_status: str = None, floor_level: int = None, view_type: str = None, property_age: int = None, esg_score_min: int = None, flip_score_min: int = None, arbitrage_score_min: int = None) -> dict:
     """
     Production valuation function using the main app's database engine
     
@@ -1878,6 +1880,14 @@ def calculate_valuation_from_database(property_type: str, area: str, size_sqm: f
                 flip_condition = f"AND {flip_col} >= {int(flip_score_min)}"
                 print(f"📈 [DB] Filtering for Flip score >= {flip_score_min}")
         
+        arbitrage_condition = ""
+        if arbitrage_score_min:
+            # Find Arbitrage column using dynamic mapping (follows existing pattern)
+            arbitrage_col = find_column_name(SALES_COLUMNS, ['arbitrage_score', 'value_score', 'arbitrage_rating'])
+            if arbitrage_col:
+                arbitrage_condition = f"AND {arbitrage_col} >= {int(arbitrage_score_min)}"
+                print(f"💰 [DB] Filtering for Arbitrage score >= {arbitrage_score_min}")
+        
         # Enhanced SQL query to get comprehensive comparable properties from database
         query = text(f"""
         SELECT 
@@ -1904,6 +1914,7 @@ def calculate_valuation_from_database(property_type: str, area: str, size_sqm: f
             {status_condition}
             {esg_condition}
             {flip_condition}
+            {arbitrage_condition}
             AND (
                 LOWER(area_en) LIKE LOWER(:area_param)
                 OR (
@@ -1941,9 +1952,13 @@ def calculate_valuation_from_database(property_type: str, area: str, size_sqm: f
         print(f"🔍 [DB] Found {len(df)} properties in database query")
         
         if len(df) == 0:
-            # Check if ESG filter caused empty results
-            if esg_score_min:
-                error_msg = f"No properties found with ESG score {esg_score_min}+ for {property_type} in {area}. Current ESG data ranges from 25-55. Please try a lower ESG threshold (25+, 40+) or select 'Any Score'."
+            # Check which filter caused empty results and provide helpful message
+            if arbitrage_score_min:
+                error_msg = f"No properties found with Arbitrage score {arbitrage_score_min}+ for {property_type} in {area}. Current Arbitrage data: 10-82 range (9 properties). Try lower threshold (30+, 50+) or 'Any Score'."
+            elif flip_score_min:
+                error_msg = f"No properties found with Flip score {flip_score_min}+ for {property_type} in {area}. Current Flip data ranges from 30-88. Please try a lower Flip threshold (30+, 50+, 70+) or select 'Any Score'."
+            elif esg_score_min:
+                error_msg = f"No properties found with ESG score {esg_score_min}+ for {property_type} in {area}. Current ESG data ranges from 25-65. Please try a lower ESG threshold (25+, 40+) or select 'Any Score'."
             else:
                 error_msg = f"No comparable properties found in database for {property_type} in {area}"
             raise ValueError(error_msg)
@@ -2017,11 +2032,28 @@ def calculate_valuation_from_database(property_type: str, area: str, size_sqm: f
         median_price = comparables['property_total_value'].median()
         median_price_per_sqm = comparables['price_per_sqm'].median()
         
+        # Handle NaN values (can happen with single comparable or invalid data)
+        if pd.isna(median_price) or pd.isna(median_price_per_sqm):
+            print(f"⚠️ [DB] Median calculation returned NaN, using mean as fallback")
+            median_price = comparables['property_total_value'].mean()
+            median_price_per_sqm = comparables['price_per_sqm'].mean()
+            
+            # If still NaN, use first comparable's values
+            if pd.isna(median_price) or pd.isna(median_price_per_sqm):
+                print(f"⚠️ [DB] Mean also NaN, using first comparable")
+                first_comp = comparables.iloc[0]
+                median_price = first_comp['property_total_value']
+                median_price_per_sqm = first_comp['price_per_sqm']
+        
         # Size-based estimate
         size_based_estimate = median_price_per_sqm * size_sqm
         
         # Blend estimates (70% median market price, 30% size-based calculation)
         rule_based_estimate = 0.7 * median_price + 0.3 * size_based_estimate
+        
+        # Final NaN check
+        if pd.isna(rule_based_estimate):
+            raise ValueError(f"Unable to calculate valuation: all comparable data is invalid. Found {len(comparables)} comparables but all have NaN values.")
         
         # ================================================================
         # ML HYBRID PREDICTION (PHASE 4 - APPROACH #1)
@@ -2506,24 +2538,44 @@ def calculate_valuation_from_database(property_type: str, area: str, size_sqm: f
         
         # Calculate value range (AFTER all adjustments)
         std_dev = comparables['property_total_value'].std()
-        margin = max(std_dev * 0.12, estimated_value * 0.08)  # At least 8% margin
+        
+        # Handle NaN std_dev (happens with single comparable)
+        if pd.isna(std_dev) or std_dev == 0:
+            print(f"⚠️ [DB] Standard deviation is NaN or 0, using 15% margin")
+            margin = estimated_value * 0.15  # Use 15% margin as fallback
+        else:
+            margin = max(std_dev * 0.12, estimated_value * 0.08)  # At least 8% margin
         
         # Prepare comparable properties for response
         comparable_list = []
         for _, comp in comparables.head(10).iterrows():
-            comparable_list.append({
-                'area_name': comp.get('area_name_en', 'N/A'),
-                'property_type': comp.get('property_type_en', 'N/A'),
-                'area_sqm': float(comp.get('actual_area', 0)),
-                'sold_price': float(comp.get('property_total_value', 0)),
-                'price_per_sqm': float(comp.get('price_per_sqm', 0)),
-                'project': comp.get('project_en', 'N/A'),
-                'transaction_date': str(comp.get('instance_date', 'N/A'))
-            })
+            # Safe conversion with NaN handling
+            try:
+                area_sqm = float(comp.get('actual_area', 0)) if pd.notna(comp.get('actual_area')) else 0
+                sold_price = float(comp.get('property_total_value', 0)) if pd.notna(comp.get('property_total_value')) else 0
+                price_per_sqm = float(comp.get('price_per_sqm', 0)) if pd.notna(comp.get('price_per_sqm')) else 0
+                
+                comparable_list.append({
+                    'area_name': comp.get('area_name_en', 'N/A'),
+                    'property_type': comp.get('property_type_en', 'N/A'),
+                    'area_sqm': area_sqm,
+                    'sold_price': sold_price,
+                    'price_per_sqm': price_per_sqm,
+                    'project': comp.get('project_en', 'N/A'),
+                    'transaction_date': str(comp.get('instance_date', 'N/A'))
+                })
+            except (ValueError, TypeError) as e:
+                # Skip comparables with invalid data
+                print(f"⚠️  [DB] Skipping comparable with invalid data: {e}")
+                continue
         
         # Calculate price per sqm and classify segment
         price_per_sqm_value = round(estimated_value / size_sqm) if size_sqm > 0 else 0
         segment_info = classify_price_segment(price_per_sqm_value)
+        
+        # Final NaN safety check before building result
+        if pd.isna(estimated_value) or pd.isna(confidence) or pd.isna(margin):
+            raise ValueError(f"Invalid valuation calculated: estimated_value={estimated_value}, confidence={confidence}, margin={margin}. This usually indicates data quality issues with comparables.")
         
         result = {
             'success': True,
@@ -2602,7 +2654,10 @@ def calculate_valuation_from_database(property_type: str, area: str, size_sqm: f
         return result
         
     except Exception as e:
+        import traceback
+        error_trace = traceback.format_exc()
         print(f"❌ [DB] Valuation error: {e}")
+        print(f"❌ [DB] Traceback:\n{error_trace}")
         return {
             'success': False,
             'error': str(e),

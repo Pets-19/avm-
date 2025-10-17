@@ -618,6 +618,27 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Row 6: Arbitrage Score Filter (New Row) -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px;">
+                            <!-- Arbitrage Score Filter - OPTIONAL -->
+                            <div style="grid-column: span 1;">
+                                <label for="arbitrage-score-min" style="display: flex; align-items: center; gap: 6px; margin-bottom: 5px; font-weight: 500;">
+                                    <span>💰 Arbitrage Score (Value)</span>
+                                </label>
+                                <select id="arbitrage-score-min" name="arbitrage_score_min" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <option value="">Any Score</option>
+                                    <option value="30">30+ (Good Value) ✓</option>
+                                    <option value="50">50+ (Very Good) ✓</option>
+                                    <option value="70">70+ (Excellent) ✓</option>
+                                    <option value="80">80+ (Outstanding) ✓</option>
+                                </select>
+                                <small style="color: #666; font-size: 0.75rem; display: block; margin-top: 4px;">Current Arbitrage data: 10-82 range (9 properties)</small>
+                            </div>
+                            
+                            <!-- Empty divs to align with grid -->
+                            <div style="grid-column: span 2;"></div>
+                        </div>
                     </div>
                     
                     <!-- Submit Button - Full Width -->
@@ -2561,6 +2582,7 @@
                 const propertyAge = document.getElementById('property-age').value;
                 const esgScoreMin = document.getElementById('esg-score-min').value;
                 const flipScoreMin = document.getElementById('flip-score-min').value;
+                const arbitrageScoreMin = document.getElementById('arbitrage-score-min').value;
                 
                 // Validation
                 if (!propertyType || !area || !size || size <= 0) {
@@ -2610,6 +2632,11 @@
                     // Add Flip score filter if selected
                     if (flipScoreMin && flipScoreMin !== '') {
                         requestData.flip_score_min = parseInt(flipScoreMin);
+                    }
+                    
+                    // Add Arbitrage score filter if selected
+                    if (arbitrageScoreMin && arbitrageScoreMin !== '') {
+                        requestData.arbitrage_score_min = parseInt(arbitrageScoreMin);
                     }
                     
                     const response = await fetch('/api/property/valuation', {
