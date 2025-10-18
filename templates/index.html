@@ -611,16 +611,7 @@
                                 <small style="color: #666; font-size: 0.75rem; display: block; margin-top: 4px;">Current Flip data: 30-88 range (10 properties)</small>
                             </div>
                             
-                            <!-- Tip Box - spans remaining column -->
-                            <div style="grid-column: span 1; display: flex; align-items: center;">
-                                <div style="padding: 10px 15px; background: #fff3cd; border-radius: 4px; font-size: 0.85rem; color: #856404; height: fit-content;">
-                                    <strong>💡 Tip:</strong> These optional fields help refine the valuation. Leave blank if unknown.
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Row 6: Arbitrage Score Filter (New Row) -->
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px;">
+                            <!-- Row 6: Arbitrage Score Filter - Now in same grid -->
                             <!-- Arbitrage Score Filter - OPTIONAL -->
                             <div style="grid-column: span 1;">
                                 <label for="arbitrage-score-min" style="display: flex; align-items: center; gap: 6px; margin-bottom: 5px; font-weight: 500;">
@@ -636,8 +627,15 @@
                                 <small style="color: #666; font-size: 0.75rem; display: block; margin-top: 4px;">Current Arbitrage data: 10-82 range (9 properties)</small>
                             </div>
                             
-                            <!-- Empty divs to align with grid -->
-                            <div style="grid-column: span 2;"></div>
+                            <!-- Empty column for spacing -->
+                            <div style="grid-column: span 1;"></div>
+                            
+                            <!-- Tip Box - Full width below, after Arbitrage Score -->
+                            <div style="grid-column: 1 / -1; margin-top: 10px;">
+                                <div style="padding: 10px 15px; background: #fff3cd; border-radius: 4px; font-size: 0.85rem; color: #856404; width: fit-content;">
+                                    <strong>💡 Tip:</strong> These optional fields help refine the valuation. Leave blank if unknown.
+                                </div>
+                            </div>
                         </div>
                     </div>
                     

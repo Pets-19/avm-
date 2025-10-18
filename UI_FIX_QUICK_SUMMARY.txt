@@ -1,0 +1,141 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║  ✅ UI LAYOUT FIX COMPLETE - ARBITRAGE SCORE & TIP MESSAGE REPOSITIONED ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+📋 CHANGES SUMMARY:
+
+1. ✅ Moved Arbitrage Score field INSIDE "Advanced Property Details" section
+2. ✅ Moved Tip message to appear AFTER Arbitrage Score field  
+3. ✅ Now collapsing advanced options hides Arbitrage Score too
+4. ✅ Logical flow: All optional fields → Arbitrage → Tip
+
+═══════════════════════════════════════════════════════════════════════════
+
+📊 BEFORE (OLD LAYOUT):
+
+┌─ Advanced Property Details (Optional) ▼ ───────────────────────┐
+│                                                                 │
+│  🏢 Floor Level    👁️ View Type    📅 Property Age            │
+│                                                                 │
+│  🌱 ESG Score      📈 Flip Score    💡 Tip: These optional...  │ ← Tip HERE
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+💰 Arbitrage Score (Value)  [Always Visible - PROBLEM!]          ← Outside!
+
+🏡 Get Property Valuation
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+📊 AFTER (NEW LAYOUT):
+
+┌─ Advanced Property Details (Optional) ▼ ───────────────────────┐
+│                                                                 │
+│  🏢 Floor Level    👁️ View Type    📅 Property Age            │
+│                                                                 │
+│  🌱 ESG Score      📈 Flip Score    💰 Arbitrage Score         │ ← Moved IN!
+│                                                                 │
+│  💡 Tip: These optional fields help refine the valuation.      │ ← Moved HERE
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+🏡 Get Property Valuation
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+🎯 WHEN COLLAPSED (▶):
+
+┌─ Advanced Property Details (Optional) ▶ ────────────────────────┐
+│                                                                  │
+│  [All fields hidden including Arbitrage Score and Tip]          │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+
+🏡 Get Property Valuation
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+✅ BENEFITS:
+
+1. Arbitrage Score now part of collapsible advanced options
+2. Tip message appears at the end (logical placement)
+3. Consistent behavior when toggling advanced options
+4. Cleaner visual hierarchy
+5. No orphaned fields outside sections
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+🔧 TECHNICAL CHANGES:
+
+File: templates/index.html
+Lines Modified: 600-638
+
+Structure:
+  OLD: 2 separate grid containers
+       - advancedOptions grid (5 fields + tip)
+       - Separate grid for Arbitrage (outside)
+       
+  NEW: 1 unified grid container
+       - advancedOptions grid (6 fields + tip)
+       - All within same collapsible section
+
+Grid Layout (5 columns):
+  Row 1: [Floor] [View] [Age] [ESG] [Flip]
+  Row 2: [Arbitrage] [Empty] [Empty] [Empty] [Empty]
+  Row 3: [Tip Message - Full Width]
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+✅ TESTING CHECKLIST:
+
+□ Load Property Valuation tab
+□ Verify Advanced Options expanded by default (▼)
+□ Verify all 6 fields visible (Floor, View, Age, ESG, Flip, Arbitrage)
+□ Verify Tip message appears BELOW Arbitrage field
+□ Click to collapse (▶) - verify ALL fields hidden including Arbitrage
+□ Click to expand (▼) - verify all fields reappear
+□ Fill form and submit - verify functionality unchanged
+□ Check responsive layout on different screen sizes
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+🚀 DEPLOYMENT STATUS: READY
+
+✅ Code changes applied
+✅ Structure validated
+✅ No syntax errors
+✅ Backward compatible
+✅ Zero breaking changes
+✅ All IDs and classes preserved
+✅ JavaScript toggle function unchanged
+✅ Form submission unchanged
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+📝 FILES MODIFIED:
+
+1. templates/index.html
+   - Moved arbitrage-score-min field inside advancedOptions div
+   - Moved tip message below arbitrage field
+   - Changed tip from inline grid item to full-width row
+   - Removed separate grid container for arbitrage
+
+2. UI_LAYOUT_FIX_ARBITRAGE_TIP.md (Documentation)
+   - Complete before/after comparison
+   - Technical implementation details
+   - Testing verification steps
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+Date: October 18, 2025
+Status: ✅ COMPLETE
+Tested: ✅ Automated structure validation passed
+Impact: Zero breaking changes, improved UX
